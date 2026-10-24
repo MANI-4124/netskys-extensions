@@ -15856,16 +15856,16 @@ var parseSearch = (data2) => {
         throw new Error(`CLOUDFLARE BYPASS ERROR: ReadComicsOnline returned a Cloudflare verification page (HTTP ${status}). Open the source homepage in Paperback, complete verification if offered, then retry. If it remains stuck, the site may be blocking Paperback's requests.`);
       }
     }
-    async getCloudflareBypassRequestAsync() {
-      return App.createRequest({
-        url: RCO_DOMAIN,
-        method: "GET",
-        headers: {
-          "referer": `${RCO_DOMAIN}/`,
-          "user-agent": await this.requestManager.getDefaultUserAgent()
-        }
-      });
+  async getCloudflareBypassRequestAsync() {
+  return App.createRequest({
+    url: RCO_DOMAIN,
+    method: "GET",
+    headers: {
+      "referer": `${RCO_DOMAIN}/`,
+      "user-agent": await this.requestManager.getDefaultUserAgent()
     }
+  });
+}
   };
   return __toCommonJS(ReadComicsOnline_exports);
 })();
