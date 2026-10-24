@@ -15857,18 +15857,16 @@ var parseSearch = (data2) => {
       }
     }
   
-
-getCloudflareBypassRequest() {
+async getCloudflareBypassRequestAsync() {
   return App.createRequest({
     url: RCO_DOMAIN,
     method: "GET",
     headers: {
       "referer": `${RCO_DOMAIN}/`,
-      "user-agent": this.requestManager.getDefaultUserAgent()
+      "user-agent": await this.requestManager.getDefaultUserAgent()
     }
   });
 }
-
 
   };
   return __toCommonJS(ReadComicsOnline_exports);
