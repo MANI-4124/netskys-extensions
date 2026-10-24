@@ -15659,32 +15659,64 @@ var _Sources = (() => {
     }
     return comics;
   };
-  var parseSearch = (data2) => {
-    const comics = [];
-    const collectedIds = [];
-    let parsedData;
-    try {
-      parsedData = JSON.parse(data2);
-    } catch (_error) {
-      throw new Error("ReadComicsOnline search did not return JSON. The site may have returned a Cloudflare challenge or changed its search endpoint.");
+ 
+var parseSearch = (data2) => {
+  const comics = [];
+  const collectedIds = [];
+
+  let parsedData;
+
+  try {
+    parsedData =
+      typeof data2 === "string"
+        ? JSON.parse(data2)
+        : data2;
+  } catch (_error) {
+    throw new Error(
+      "ReadComicsOnline: Search response was not valid JSON."
+    );
+  }
+
+  if (
+    !parsedData ||
+    !Array.isArray(parsedData.suggestions)
+  ) {
+    throw new Error(
+      "ReadComicsOnline: Expected a suggestions array. " +
+      "Received: " +
+      (data2 === null ? "null" : typeof data2)
+    );
+  }
+
+  for (const item of parsedData.suggestions) {
+    const id = item.data;
+    const title = item.value;
+
+    if (
+      !id ||
+      !title ||
+      collectedIds.includes(id)
+    ) {
+      continue;
     }
-    if (!parsedData || !Array.isArray(parsedData.suggestions)) {
-      throw new Error("ReadComicsOnline search response has an unexpected format; expected a suggestions array.");
-    }
-    for (const item of parsedData.suggestions) {
-      const id = item.data;
-      const image = `https://readcomicsonline.ru/uploads/manga/${id}/cover/cover_250x350.jpg`;
-      const title = item.value;
-      if (!id || !title || collectedIds.includes(id)) continue;
-      comics.push(App.createPartialSourceManga({
+
+    const image =
+      `https://readcomicsonline.ru/uploads/manga/${id}/cover/cover_250x350.jpg`;
+
+    comics.push(
+      App.createPartialSourceManga({
         mangaId: id,
         image,
         title: decode(title)
-      }));
-      collectedIds.push(id);
-    }
-    return comics;
-  };
+      })
+    );
+
+    collectedIds.push(id);
+  }
+
+  return comics;
+};
+
   var isLastPage = ($2) => {
     let isLast = false;
     const pages = [];
