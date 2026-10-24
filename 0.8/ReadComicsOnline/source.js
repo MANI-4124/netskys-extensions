@@ -15662,7 +15662,15 @@ var _Sources = (() => {
   var parseSearch = (data2) => {
     const comics = [];
     const collectedIds = [];
-    const parsedData = JSON.parse(data2);
+    let parsedData;
+    try {
+      parsedData = JSON.parse(data2);
+    } catch (_error) {
+      throw new Error("ReadComicsOnline search did not return JSON. The site may have returned a Cloudflare challenge or changed its search endpoint.");
+    }
+    if (!parsedData || !Array.isArray(parsedData.suggestions)) {
+      throw new Error("ReadComicsOnline search response has an unexpected format; expected a suggestions array.");
+    }
     for (const item of parsedData.suggestions) {
       const id = item.data;
       const image = `https://readcomicsonline.ru/uploads/manga/${id}/cover/cover_250x350.jpg`;
@@ -15736,7 +15744,7 @@ var _Sources = (() => {
         method: "GET"
       });
       const response = await this.requestManager.schedule(request, 1);
-      this.CloudFlareError(response.status);
+      this.CloudFlareError(response.status, response.data);
       const $2 = load(response.data);
       return parseMangaDetails($2, mangaId);
     }
@@ -15746,7 +15754,7 @@ var _Sources = (() => {
         method: "GET"
       });
       const response = await this.requestManager.schedule(request, 1);
-      this.CloudFlareError(response.status);
+      this.CloudFlareError(response.status, response.data);
       const $2 = load(response.data);
       return parseChapters($2, mangaId);
     }
@@ -15756,7 +15764,7 @@ var _Sources = (() => {
         method: "GET"
       });
       const response = await this.requestManager.schedule(request, 1);
-      this.CloudFlareError(response.status);
+      this.CloudFlareError(response.status, response.data);
       const $2 = load(response.data);
       return parseChapterDetails($2, mangaId, chapterId);
     }
@@ -15766,7 +15774,7 @@ var _Sources = (() => {
         method: "GET"
       });
       const response = await this.requestManager.schedule(request, 1);
-      this.CloudFlareError(response.status);
+      this.CloudFlareError(response.status, response.data);
       const $2 = load(response.data);
       parseHomeSections($2, sectionCallback);
     }
@@ -15788,7 +15796,7 @@ var _Sources = (() => {
         method: "GET"
       });
       const response = await this.requestManager.schedule(request, 1);
-      this.CloudFlareError(response.status);
+      this.CloudFlareError(response.status, response.data);
       const $2 = load(response.data);
       const manga = parseViewMore($2);
       metadata = !isLastPage($2) ? { page: page + 1 } : void 0;
@@ -15803,16 +15811,17 @@ var _Sources = (() => {
         method: "GET"
       });
       const response = await this.requestManager.schedule(request, 1);
-      this.CloudFlareError(response.status);
+      this.CloudFlareError(response.status, response.data);
       const manga = parseSearch(response.data);
       return App.createPagedResults({
         results: manga
       });
     }
-    CloudFlareError(status) {
-      if (status == 503 || status == 403) {
-        throw new Error(`CLOUDFLARE BYPASS ERROR:
-Please go to the homepage of <${_ReadComicsOnline.name}> and press the cloud icon.`);
+    CloudFlareError(status, body = "") {
+      const text = typeof body === "string" ? body : "";
+      const cloudflareChallenge = /cf-chl-|challenge-platform|Just a moment\.\.\.|Performing security verification|Verify you are human|Checking your browser/i.test(text);
+      if (status == 503 || status == 403 || cloudflareChallenge) {
+        throw new Error(`CLOUDFLARE BYPASS ERROR: ReadComicsOnline returned a Cloudflare verification page (HTTP ${status}). Open the source homepage in Paperback, complete verification if offered, then retry. If it remains stuck, the site may be blocking Paperback's requests.`);
       }
     }
     async getCloudflareBypassRequestAsync() {
