@@ -21,7 +21,13 @@
   "dependencies": {
     "@paperback/toolchain": "^0.8.7",
     "@paperback/types": "^0.8.7",
-    "cheerio": "^1.0.0",
+    "cheerio": "1.0.0",
     "html-entities": "^2.5.2"
+  },
+  "overrides": {
+    "htmlparser2": "9.1.0",
+    "parse5": "7.1.2",
+    "parse5-htmlparser2-tree-adapter": "7.1.0",
+    "parse5-parser-stream": "7.1.2"
   }
 }

@@ -32,7 +32,7 @@ import {
 const XOXO_DOMAIN = 'https://xoxocomic.com'
 
 export const XoxoComicInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'XoxoComic',
     icon: 'icon.png',
     author: 'MANI-4124',
