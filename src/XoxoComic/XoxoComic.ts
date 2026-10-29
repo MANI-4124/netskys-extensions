@@ -32,12 +32,12 @@ import {
 const XOXO_DOMAIN = 'https://xoxocomic.com'
 
 export const XoxoComicInfo: SourceInfo = {
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'XoxoComic',
     icon: 'icon.png',
     author: 'MANI-4124',
     authorWebsite: 'https://github.com/MANI-4124',
-    description: 'Extension that pulls comics from xoxocomic.com',
+    description: 'Browse comics and issues on xoxocomic.com. Reading may be unavailable because the site inconsistently serves page images to third-party readers.',
     contentRating: ContentRating.MATURE,
     websiteBaseURL: XOXO_DOMAIN,
     sourceTags: [],
